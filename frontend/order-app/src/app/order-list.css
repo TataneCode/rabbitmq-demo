@@ -1,0 +1,12 @@
+.list-card { background: #fff; padding: 1.5rem; border-radius: 8px;
+             border: 1px solid #e0e0e0; }
+h2 { margin-top: 0; display: flex; align-items: center; gap: .6rem; }
+.badge { background: #5c6bc0; color: #fff; border-radius: 12px;
+         padding: .1rem .6rem; font-size: .8rem; }
+.empty { color: #888; font-style: italic; }
+.order-item { border: 1px solid #e8eaf6; border-radius: 6px;
+              padding: .8rem 1rem; margin-bottom: .7rem; }
+.order-header { display: flex; justify-content: space-between; margin-bottom: .3rem; }
+.date { color: #888; font-size: .85rem; }
+.order-body { font-size: 1rem; }
+.order-id { font-size: .7rem; color: #bbb; margin-top: .3rem; }

@@ -1,0 +1,20 @@
+<section class="list-card">
+  <h2>Commandes reçues <span class="badge">{{ orders().length }}</span></h2>
+
+  @if (orders().length === 0) {
+    <p class="empty">En attente de commandes… (STOMP connecté à ws://localhost:15674/ws)</p>
+  }
+
+  @for (order of orders(); track order.orderId) {
+    <div class="order-item">
+      <div class="order-header">
+        <strong>{{ order.customerName }}</strong>
+        <span class="date">{{ order.submittedAt | date:'HH:mm:ss' }}</span>
+      </div>
+      <div class="order-body">
+        {{ order.productName }} × {{ order.quantity }}
+      </div>
+      <div class="order-id">{{ order.orderId }}</div>
+    </div>
+  }
+</section>

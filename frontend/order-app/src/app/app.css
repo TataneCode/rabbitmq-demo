@@ -1,0 +1,4 @@
+main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; font-family: sans-serif; }
+h1 { text-align: center; color: #3f4a6d; }
+.layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 600px) { .layout { grid-template-columns: 1fr; } }

@@ -1,0 +1,26 @@
+<section class="form-card">
+  <h2>Passer une commande</h2>
+
+  <div class="field">
+    <label>Client</label>
+    <input [(ngModel)]="form.customerName" placeholder="Nom du client" />
+  </div>
+
+  <div class="field">
+    <label>Produit</label>
+    <input [(ngModel)]="form.productName" placeholder="Nom du produit" />
+  </div>
+
+  <div class="field">
+    <label>Quantité</label>
+    <input type="number" [(ngModel)]="form.quantity" min="1" />
+  </div>
+
+  <button (click)="submit()" [disabled]="sending()">
+    {{ sending() ? 'Envoi...' : 'Envoyer' }}
+  </button>
+
+  @if (feedback()) {
+    <p class="feedback">{{ feedback() }}</p>
+  }
+</section>
