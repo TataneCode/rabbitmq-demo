@@ -3,6 +3,8 @@ using OrderConsumer;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+var rabbitHost = builder.Configuration["RabbitMq:Host"] ?? "localhost";
+
 // ── StompPublisher (Singleton) ────────────────────────────────────────────────
 // On l'enregistre comme singleton car la connexion AMQP est coûteuse.
 // L'initialisation async se fait dans un IHostedService dédié.
@@ -11,7 +13,7 @@ builder.Services.AddSingleton<IStompPublisher>(stompPublisher);
 
 // Service d'initialisation : attend que RabbitMQ soit prêt avant de connecter
 builder.Services.AddHostedService(sp =>
-    new StompInitService(stompPublisher, sp.GetRequiredService<ILogger<StompInitService>>()));
+    new StompInitService(stompPublisher, rabbitHost, sp.GetRequiredService<ILogger<StompInitService>>()));
 
 // ── MassTransit ───────────────────────────────────────────────────────────────
 // AddConsumer<T> enregistre notre consumer.
@@ -22,7 +24,7 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((ctx, cfg) =>
     {
-        cfg.Host("localhost", "/", h =>
+        cfg.Host(builder.Configuration["RabbitMq:Host"] ?? "localhost", "/", h =>
         {
             h.Username("guest");
             h.Password("guest");
@@ -39,13 +41,13 @@ host.Run();
 // ── Initialisation différée du StompPublisher ─────────────────────────────────
 // On attend que le host soit démarré avant de se connecter à RabbitMQ
 // (RabbitMQ doit déjà être disponible à ce stade).
-internal class StompInitService(StompPublisher publisher, ILogger<StompInitService> logger)
+internal class StompInitService(StompPublisher publisher, string rabbitHost, ILogger<StompInitService> logger)
     : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Initialisation de la connexion STOMP publisher...");
-        await publisher.InitAsync("localhost", "guest", "guest");
+        await publisher.InitAsync(rabbitHost, "guest", "guest");
         logger.LogInformation("STOMP publisher connecté.");
     }
 

@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+WORKDIR /src
+COPY Shared/ Shared/
+COPY OrderProducer/ OrderProducer/
+RUN dotnet publish OrderProducer/OrderProducer.csproj -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "OrderProducer.dll"]

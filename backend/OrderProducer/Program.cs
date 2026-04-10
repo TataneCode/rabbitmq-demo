@@ -3,6 +3,8 @@ using Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var rabbitHost = builder.Configuration["RabbitMq:Host"] ?? "localhost";
+
 // ── MassTransit ──────────────────────────────────────────────────────────────
 // On configure MassTransit pour utiliser RabbitMQ comme transport.
 // MassTransit crée automatiquement les exchanges et queues nécessaires.
@@ -10,7 +12,7 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((ctx, cfg) =>
     {
-        cfg.Host("localhost", "/", h =>
+        cfg.Host(rabbitHost, "/", h =>
         {
             h.Username("guest");
             h.Password("guest");
@@ -18,15 +20,7 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
-// CORS pour laisser Angular (port 4200) appeler l'API
-builder.Services.AddCors(opts =>
-    opts.AddDefaultPolicy(p => p.WithOrigins("http://localhost:4200")
-                                .AllowAnyHeader()
-                                .AllowAnyMethod()));
-
 var app = builder.Build();
-
-app.UseCors();
 
 // ── Endpoint POST /orders ────────────────────────────────────────────────────
 // Reçoit une commande depuis Angular et la publie dans RabbitMQ via MassTransit.

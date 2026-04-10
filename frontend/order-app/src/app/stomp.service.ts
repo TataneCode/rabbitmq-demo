@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 // RabbitMQ expose un WebSocket STOMP sur le port 15674 (plugin rabbitmq_web_stomp).
 // Le chemin /ws est le point d'entrée du WebSocket STOMP.
 const stompConfig: RxStompConfig = {
-  brokerURL: 'ws://localhost:15674/ws',
+  brokerURL: `ws://${window.location.host}/ws`,
   connectHeaders: {
     login:    'guest',
     passcode: 'guest',

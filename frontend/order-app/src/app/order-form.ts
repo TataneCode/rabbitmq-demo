@@ -33,7 +33,7 @@ export class OrderFormComponent {
     this.feedback.set('');
 
     // Appel HTTP → OrderProducer → MassTransit → RabbitMQ
-    this.http.post('http://localhost:5000/orders', this.form).subscribe({
+    this.http.post('/orders', this.form).subscribe({
       next: () => {
         this.feedback.set('✅ Commande envoyée !');
         this.form = { customerName: '', productName: '', quantity: 1 };

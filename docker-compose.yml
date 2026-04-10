@@ -2,10 +2,6 @@ services:
   rabbitmq:
     image: rabbitmq:4-management
     container_name: rabbitmq
-    ports:
-      - "5672:5672"   # AMQP (MassTransit)
-      - "15672:15672" # Management UI  →  http://localhost:15672
-      - "15674:15674" # STOMP over WebSocket  →  ws://localhost:15674/ws
     volumes:
       - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
     environment:
@@ -16,3 +12,47 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app-net
+
+  order-producer:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.producer
+    container_name: order-producer
+    environment:
+      RabbitMq__Host: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - app-net
+
+  order-consumer:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.consumer
+    container_name: order-consumer
+    environment:
+      RabbitMq__Host: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - app-net
+
+  frontend:
+    build:
+      context: ./frontend/order-app
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - order-producer
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
